@@ -1,0 +1,71 @@
+# Load configuration
+from common import read_list , temp_or_not
+
+base_dir = config["base_dir"]
+keep_temp = config.get("keep_temp", False)
+accession_list = read_list(config["list_file"])
+
+# Register storage provider
+storage:
+    provider="s3",
+    bucket="logan-pub",
+    prefix="c/",
+    no_sign_request=True,
+    max_requests_per_second=10
+
+# read list of accessions
+rule all:
+    input:
+        expand(f"{base_dir}/logan_minimap2/{{accession}}.minimap2_output", accession=accession_list)
+
+# if output directory doesn't exist create it 
+rule create_base_dir:
+    output:
+        directory(base_dir)
+    shell:
+        "mkdir {output}"
+
+# create a directory for downloaded data to be stored
+# if keep_temp is FALSE this will be deleted
+rule create_data_dir:
+    input:
+        base_dir
+    output:
+        temp_or_not(directory(f"{base_dir}/data"), keep_temp)
+    shell:
+        "mkdir {output}"
+
+# download accession if availible and store in directory base_dir/data
+rule download:
+    params:
+        contigs=lambda wildcards: f"s3://logan-pub/c/{wildcards.accession}/{wildcards.accession}.contigs.fa.zst",
+    output:
+        temp_or_not(f"{base_dir}/data/{{accession}}.contigs.fa", keep_temp)
+    shell:
+        """
+        if aws s3 ls {params.contigs} --no-sign-request; then
+            aws s3 cp {params.contigs} - --no-sign-request | zstdcat > {output}
+        else
+            echo "File {params.contigs} not found, skipping accession {wildcards.accession}."
+        fi
+        touch {output} # co-pilot suggestion - creates empty file so the program can continue, may be a better way - maybe check the list when it is read in first
+        """
+
+# run minimap with downloaded contigs against query fasta
+rule run_minimap2:
+    input:
+        fasta=config["fasta"],
+        contigs=f"{base_dir}/data/{{accession}}.contigs.fa"
+    output:
+        f"{base_dir}/logan_minimap2/{{accession}}.minimap2_output"
+    shell:
+        """
+        minimap2 -t 8 -a {input.fasta} {input.contigs} \
+        | samtools view -hF4 - \
+        > {output}
+        """
+
+# if `snakemake help` is run 
+rule help:
+    run:
+        shell("python help.py")

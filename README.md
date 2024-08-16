@@ -1,2 +1,2 @@
-# Snake make pipeline for screening LOGAN with minimap2
+# Snakemake pipeline for screening LOGAN with minimap2
 

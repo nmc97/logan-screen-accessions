@@ -1,0 +1,4 @@
+base_dir: "./"
+list_file: "/path/to/list_of_accessions.txt"
+fasta: "/path/to/query.fasta"
+keep_temp: FALSE

@@ -1,0 +1,4 @@
+base_dir: "test"
+list_file: "test/accessions.txt"
+fasta: "test/plasmid.fasta"
+keep_temp: FALSE
