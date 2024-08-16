@@ -13,17 +13,33 @@ storage:
     no_sign_request=True,
     max_requests_per_second=10
 
-# read list of accessions
+# set rule that needs to be fulfilled for pipeline to end
 rule all:
     input:
-        expand(f"{base_dir}/logan_minimap2/{{accession}}.minimap2_output", accession=accession_list)
+        #expand(f"{base_dir}/logan_minimap2/{{accession}}.minimap2_output", accession=accession_list)
+        f"{base_dir}/metrics/summary.txt"
 
 # if output directory doesn't exist create it 
 rule create_base_dir:
     output:
         directory(base_dir)
     shell:
-        "mkdir {output}"
+        """
+        mkdir -p {output}
+        """
+
+# create metrics dir
+rule create_metrics_dir:
+    input:
+        base_dir
+    output:
+       directory(f"{base_dir}/metrics")
+    shell:
+        """
+        echo "making directory {output}"
+        mkdir -p {output}
+        touch {output}/test_file.txt 
+        """
 
 # create a directory for downloaded data to be stored
 # if keep_temp is FALSE this will be deleted
@@ -33,10 +49,12 @@ rule create_data_dir:
     output:
         temp_or_not(directory(f"{base_dir}/data"), keep_temp)
     shell:
-        "mkdir {output}"
+        "mkdir -p {output}"
 
 # download accession if availible and store in directory base_dir/data
 rule download:
+    #input:
+    #    data_dir=f"{base_dir}/data"
     params:
         contigs=lambda wildcards: f"s3://logan-pub/c/{wildcards.accession}/{wildcards.accession}.contigs.fa.zst",
     output:
@@ -64,6 +82,31 @@ rule run_minimap2:
         | samtools view -hF4 - \
         > {output}
         """
+
+# calulate metrics 
+rule calculate_metrics:
+    input:
+        bam=f"{base_dir}/logan_minimap2/{{accession}}.minimap2_output",
+        #metrics_dir=f"{base_dir}/metrics"
+    output:
+        f"{base_dir}/metrics/{{accession}}.metrics.txt"
+    shell:
+        """
+        echo "running - python workflow/calculate_metrics.py {input.bam} {wildcards.accession} > {output}"
+        python workflow/calculate_metrics.py {input.bam} {wildcards.accession} > {output}
+        """
+
+rule aggregate_metrics:
+    input:
+        expand(f"{base_dir}/metrics/{{accession}}.metrics.txt", accession=accession_list),
+        #metrics_dir=f"{base_dir}/logan_minimap2/metrics"
+    output:
+        f"{base_dir}/metrics/summary.txt"
+    shell:
+        """
+        cat {input} > {output}
+        """
+
 
 # if `snakemake help` is run 
 rule help:
