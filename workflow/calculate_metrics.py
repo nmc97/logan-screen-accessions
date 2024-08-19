@@ -1,0 +1,28 @@
+import pysam
+import sys
+import subprocess
+import os
+
+def sort_and_index_bam(bamfile_path):
+    sorted_bamfile_path = bamfile_path.replace(".bam", ".sorted.bam")
+    # Sort the BAM file
+    subprocess.run(["samtools", "sort", "-o", sorted_bamfile_path, bamfile_path], check=True)
+    # Index the sorted BAM file
+    subprocess.run(["samtools", "index", sorted_bamfile_path], check=True)
+    return sorted_bamfile_path
+
+def calculate_coverage(bamfile_path):
+    bamfile = pysam.AlignmentFile(bamfile_path, "rb")
+    total_length = sum(bamfile.lengths)
+    #total_length = sum([seq.length for seq in bamfile.header.references])
+    covered_bases = sum([pileupcolumn.n for pileupcolumn in bamfile.pileup()])
+    coverage = (covered_bases / total_length) * 100
+    return covered_bases, coverage
+
+if __name__ == "__main__":
+    bamfile_path = sys.argv[1]
+    accession = sys.argv[2]
+    sorted_bamfile_path = sort_and_index_bam(bamfile_path)
+
+    covered_bases, coverage = calculate_coverage(sorted_bamfile_path)
+    print(f"{accession}\t{covered_bases}\t{coverage:.2f}")
