@@ -4,7 +4,7 @@ This is a snakemake pipeline for screening the LOGAN database for a query sequen
 
 ## Mamba environment
 
-Dependencies
+Dependencies (need to chack versions that currently work)
 
 - snakemake
 - aws
@@ -12,9 +12,12 @@ Dependencies
 - python
 - minimap2
 - pysam
- 
+- snakemake-storage-plugin-s3
+- seqkit (can't remember if this is needed but could use later on)
+
+ mamba environment (need to check this works)
 ``` bash
-to be filled
+mamba create -n logan_snakemake -c conda-forge -c bioconda  snakemake awscli minimap2 samtools seqkit snakemake-storage-plugin-s3 pysam
 ```
 
 Basic usage:
