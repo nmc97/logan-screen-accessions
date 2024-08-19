@@ -46,7 +46,7 @@ snakemake -s /path/to/Snakefile --configfile /path/to/config.yaml
 If the job gets interrupted you can use `` to start again with the accessions that were not completed properly:
 
 ``` bash
-snakemake --cores 6 --rerun--incomplete
+snakemake --cores 6 --rerun-incomplete
 ```
 
 Use `snakemake help` to display help:
