@@ -90,4 +90,4 @@ Usage: snakemake [OPTIONS]
 5. change it so that it can be run from anywhere
 6. move scripts out of workflow directory into scripts directory
 7. write it so that it builds mamba environments within rules (maybe not neccessary in this case)
-8. Change the coverage calculation/ add calculation that specifically counts for each base in the query how many are covered by at least one sequence
+8. Consider changing minimap to deal with contiggs using `-x asm5`
