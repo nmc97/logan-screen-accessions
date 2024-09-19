@@ -2,7 +2,8 @@
 
 This is a snakemake pipeline for screening the LOGAN database for a query sequence using minimap2.
 
-## Mamba environment
+## Set up 
+### Mamba environment
 
 Dependencies (need to chack versions that currently work)
 
@@ -31,7 +32,7 @@ export AWS_SECRET_ACCESS_KEY="null"
 export AWS_DEFAULT_REGION=us-west-2
 ```
 
-Basic usage:
+## Basic usage:
 
 Edit config file `config.yaml` with correct file paths and specify if downloaded contigs should be kept:
 
@@ -90,6 +91,34 @@ Usage: snakemake [OPTIONS]
     Run test files:
       snakemake --cores 1 --configfile test/config.test.yaml
 ```
+
+
+## Output files
+
+Results will be stored in "base_dir"
+
+### Downloaded assemblies
+Logan assemblies will be downloaded into:
+`$base_dir/data`
+You can change the setting keep_temp to keep or remove these files after running minimap2.
+
+### Minimap output
+Minimap outputs will be stored in: 
+`$base_dir/logan_minimap2`
+
+### Metrics calculated
+Some calculations are made to determine the coverage of each samples over the query
+A metrics folder will be made with individual metrics files and a summary file:
+ `$base_dir/metrics/summary.txt`
+
+example summary.txt:
+``` bash
+ERR10144421     92447   10.28   6066    0.67
+SRR19201055     94555444        10510.76        765643  85.11
+```
+
+Columns are sample_name, coverage, coverage pc, cover 
+
 # To DO
 
 1. Change how it handles accessions with no corresponding data in the logan s3 bucket
@@ -98,7 +127,10 @@ Usage: snakemake [OPTIONS]
 2. Think about how it deals with logs
 3. Add Diamond option and make minimap2 optional
 4. Parse output files and summarise
-5. change it so that it can be run from anywhere
-6. move scripts out of workflow directory into scripts directory
-7. write it so that it builds mamba environments within rules (maybe not neccessary in this case)
-8. Consider changing minimap to deal with contiggs using `-x asm5`
+5. Change it so that it can be run from anywhere
+6. Move scripts out of workflow directory into scripts directory
+7. Write it so that it builds mamba environments within rules (maybe not neccessary in this case)
+8. Consider changing minimap to deal with contigs using `-x asm5`
+9. Change how it calculates metrics
+10. think about removing more files if needed
+11. Consider how it could work for multiple query sequences (saves downloading the same thing over and over again)
