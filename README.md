@@ -20,6 +20,17 @@ Dependencies (need to chack versions that currently work)
 mamba create -n logan_snakemake -c conda-forge -c bioconda  snakemake awscli minimap2 samtools seqkit snakemake-storage-plugin-s3 pysam
 ```
 
+Set AWS environmental variables to null
+Add aws region as `us-west-2`
+
+``` bash
+export SNAKEMAKE_STORAGE_S3_ACCESS_KEY="null"
+export SNAKEMAKE_STORAGE_S3_SECRET_KEY="null"
+export AWS_ACCESS_KEY_ID="null"
+export AWS_SECRET_ACCESS_KEY="null"
+export AWS_DEFAULT_REGION=us-west-2
+```
+
 Basic usage:
 
 Edit config file `config.yaml` with correct file paths and specify if downloaded contigs should be kept:
