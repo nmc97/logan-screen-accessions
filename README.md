@@ -79,6 +79,7 @@ Usage: snakemake [OPTIONS]
     Run test files:
       snakemake --cores 1 --configfile test/config.test.yaml
 ```
+
 # To DO
 
 1. Change how it handles accessions with no corresponding data in the logan s3 bucket
@@ -91,3 +92,4 @@ Usage: snakemake [OPTIONS]
 6. move scripts out of workflow directory into scripts directory
 7. write it so that it builds mamba environments within rules (maybe not neccessary in this case)
 8. Consider changing minimap to deal with contiggs using `-x asm5`
+9. Change workflow to be more like other snakemake workflow templates
