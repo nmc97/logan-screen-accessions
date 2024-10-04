@@ -1,0 +1,5 @@
+base_dir: "test/sra"
+metrics_file: "test/accessions.txt"
+fasta: "test/plasmid.fasta"
+keep_fastq: TRUE
+keep_sra: FALSE
