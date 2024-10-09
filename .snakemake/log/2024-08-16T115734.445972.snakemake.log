@@ -1,6 +1,0 @@
-Building DAG of jobs...
-MissingInputException in rule all in file /home/nc07/programs/logan-screen-accessions/workflow/Snakefile, line 17:
-Missing input files for rule all:
-    affected files:
-        test/logan_minimap2/SRR19201055.minimap2_output
-        test/logan_minimap2/ERR10144421.minimap2_output
