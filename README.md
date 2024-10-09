@@ -17,8 +17,9 @@ Dependencies (need to chack versions that currently work)
 - seqkit (can't remember if this is needed but could use later on)
 
  mamba environment (need to check this works)
+
 ``` bash
-mamba create -n logan_snakemake -c conda-forge -c bioconda  snakemake awscli minimap2 samtools seqkit snakemake-storage-plugin-s3 pysam
+mamba create -n logan_snakemake -c conda-forge -c bioconda  snakemake awscli minimap2 samtools seqkit snakemake-storage-plugin-s3 pysam sra-tools
 ```
 
 Set AWS environmental variables to null
@@ -120,11 +121,12 @@ Columns are sample_name, coverage, coverage pc, cover
 
 ### Running sra download script
 
-Ensure sra-tools is availible in your conda environment
+- Prepare accessions file 
 
-Edit config file e.g.:
+- Ensure sra-tools is availible in your conda environment
 
-```
+- Edit or create a new config file e.g.:
+``` bash
 base_dir: "test/sra"
 metrics_file: "test/accessions.txt"
 fasta: "test/plasmid.fasta"
@@ -132,9 +134,10 @@ keep_fastq: TRUE
 keep_sra: FALSE
 ```
 
-Run pipeline
+- Run pipeline `Snakefile_download_sra_minimap2.smk`
+
 ``` bash
-snakemake -s /path/to/Snakefile_download_sra_minimap2_04/smk --configfile /path/to/config.yaml
+snakemake -s /path/to/Snakefile_download_sra_minimap2.smk --configfile /path/to/config.yaml
 ```
 
 # To DO
