@@ -92,7 +92,6 @@ Usage: snakemake [OPTIONS]
       snakemake --cores 1 --configfile test/config.test.yaml
 ```
 
-
 ## Output files
 
 Results will be stored in "base_dir"
@@ -118,6 +117,25 @@ SRR19201055     94555444        10510.76        765643  85.11
 ```
 
 Columns are sample_name, coverage, coverage pc, cover 
+
+### Running sra download script
+
+Ensure sra-tools is availible in your conda environment
+
+Edit config file e.g.:
+
+```
+base_dir: "test/sra"
+metrics_file: "test/accessions.txt"
+fasta: "test/plasmid.fasta"
+keep_fastq: TRUE
+keep_sra: FALSE
+```
+
+Run pipeline
+``` bash
+snakemake -s /path/to/Snakefile_download_sra_minimap2_04/smk --configfile /path/to/config.yaml
+```
 
 # To DO
 
