@@ -15,6 +15,7 @@ Dependencies (need to chack versions that currently work)
 - pysam
 - snakemake-storage-plugin-s3
 - seqkit (can't remember if this is needed but could use later on)
+- sra-tools (if you want to run the pipeline on the raw reads after first screen with logan)
 
  mamba environment (need to check this works)
 
@@ -146,7 +147,7 @@ snakemake -s /path/to/Snakefile_download_sra_minimap2.smk --configfile /path/to/
    1. at the moment it creates an empty file
    2. maybe better to remove these from the accession list before processing them so the pipeline doesn't require outputs to move on
 2. Think about how it deals with logs
-3. Add Diamond option and make minimap2 optional
+3. Add *Diamond* option and make minimap2 optional
 4. Parse output files and summarise
 5. Change it so that it can be run from anywhere
 6. Move scripts out of workflow directory into scripts directory
@@ -155,3 +156,4 @@ snakemake -s /path/to/Snakefile_download_sra_minimap2.smk --configfile /path/to/
 9. Change how it calculates metrics
 10. think about removing more files if needed
 11. Consider how it could work for multiple query sequences (saves downloading the same thing over and over again)
+12. Figure out why the LAYOUT finding doesn't work well
