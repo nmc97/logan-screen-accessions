@@ -1,5 +1,5 @@
 # Load configuration
-from common import read_list , temp_or_not
+from cripts.common import read_list , temp_or_not
 
 base_dir = config["base_dir"]
 keep_temp = config.get("keep_temp", False)
@@ -92,8 +92,8 @@ rule calculate_metrics:
         f"{base_dir}/metrics/{{accession}}.metrics.txt"
     shell:
         """
-        echo "running - python workflow/calculate_metrics.py {input.bam} {wildcards.accession} > {output}"
-        python workflow/calculate_metrics.py {input.bam} {wildcards.accession} > {output}
+        echo "running - python scripts/calculate_metrics.py {input.bam} {wildcards.accession} > {output}"
+        python scripts/calculate_metrics.py {input.bam} {wildcards.accession} > {output}
         """
 
 rule aggregate_metrics:
@@ -111,4 +111,4 @@ rule aggregate_metrics:
 # if `snakemake help` is run 
 rule help:
     run:
-        shell("python help.py")
+        shell("python scripts/help.py")
