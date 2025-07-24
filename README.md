@@ -187,3 +187,10 @@ SRR19201055     94555444        10510.76        765643  85.11
 10. Think about removing more files if needed
 11. Consider how it could work for multiple query sequences (saves downloading the same thing over and over again for different queries)
 12. Figure out why the LAYOUT finding doesn't always work well
+
+## More about Logan
+**GitHub:** https://github.com/IndexThePlanet/Logan
+**Preprint:** https://www.biorxiv.org/content/10.1101/2024.07.30.605881v1
+**Citation:** "Logan: Planetary-Scale Genome Assembly Surveys Life’s Diversity
+Rayan Chikhi, Brice Raffestin, Anton Korobeynikov, Robert Edgar, Artem Babaian
+bioRxiv 2024.07.30.605881; doi: https://doi.org/10.1101/2024.07.30.605881
