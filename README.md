@@ -5,23 +5,25 @@ This is a snakemake pipeline for screening the LOGAN database for a query sequen
 ## Set up 
 ### Mamba environment
 
-Dependencies (need to chack versions that currently work)
+Dependencies (version tested):
 
-- snakemake
-- aws
-- samtools
-- python
-- minimap2
-- pysam
-- snakemake-storage-plugin-s3
-- seqkit (can't remember if this is needed but could use later on)
-- sra-tools (if you want to run the pipeline on the raw reads after first screen with logan)
+- snakemake (9.8.1)
+- awscli (2.27.58)
+- samtools (1.22.1)
+- python (3.12.11)
+- minimap2 (2.30)
+- pysam (0.23.3)
+- snakemake-storage-plugin-s3 (0.3.3)
+- sra-tools (3.2.1) (needed only to run the pipeline on raw reads after first screen with logan assemblies)
+- entrez-direct (24.0) (same as above)
 
- mamba environment (need to check this works)
+#### Create mamba environment:
 
 ``` bash
-mamba create -n logan_snakemake -c conda-forge -c bioconda  snakemake awscli minimap2 samtools seqkit snakemake-storage-plugin-s3 pysam sra-tools
+mamba create -n logan_snakemake -c conda-forge -c bioconda snakemake awscli minimap2 samtools snakemake-storage-plugin-s3 pysam sra-tools entrez-direct
 ```
+
+### AWS environmental variables
 
 Set AWS environmental variables to null
 Add aws region as `us-west-2`
@@ -36,7 +38,9 @@ export AWS_DEFAULT_REGION=us-west-2
 
 ## Basic usage:
 
-Edit config file `config.yaml` with correct file paths and specify if downloaded contigs should be kept:
+- Prepare accessions file 
+
+- Edit config file `config.yaml` with correct file paths and specify if downloaded contigs should be kept:
 
 ``` bash
 base_dir: "./"
@@ -45,23 +49,25 @@ fasta: "/path/to/query.fasta"
 keep_temp: FALSE
 ```
 
-Run pipeline and optionally specify cores:
+- Run pipeline and optionally specify cores:
 
 ``` bash
 snakemake --cores 6
 ```
 
-You can specify paths to the snakemake file and config file:
+- You can specify paths to the snakemake file and config file:
 
 ``` bash
 snakemake -s /path/to/Snakefile --configfile /path/to/config.yaml
 ```
 
-If the job gets interrupted you can use `` to start again with the accessions that were not completed properly:
+- If the job gets interrupted you can use `--rerun-incomplete` to start again with the accessions that were not completed properly:
 
 ``` bash
 snakemake --cores 6 --rerun-incomplete
 ```
+
+#### basic help file 
 
 Use `snakemake help` to display help:
 
@@ -94,37 +100,47 @@ Usage: snakemake [OPTIONS]
       snakemake --cores 1 --configfile test/config.test.yaml
 ```
 
+#### Test
+
+```bash
+snakemake --cores 2 --configfile ./test/config.test.yaml 
+```
+OR specify the snakemake workflow file:
+```bash
+snakemake --cores 2 -s ./workflow/Snakefile --configfile ./test/config.test.yaml  
+```
+
 ## Output files
 
-Results will be stored in "base_dir"
+Results will be stored in "base_dir" as specified in config file.
 
 ### Downloaded assemblies
 Logan assemblies will be downloaded into:
 `$base_dir/data`
-You can change the setting keep_temp to keep or remove these files after running minimap2.
+You can change the setting `keep_temp` to keep or remove these files after running minimap2.
 
 ### Minimap output
 Minimap outputs will be stored in: 
 `$base_dir/logan_minimap2`
 
 ### Metrics calculated
-Some calculations are made to determine the coverage of each samples over the query
+Some calculations are made using Samtools to determine the coverage of each samples over the query
 A metrics folder will be made with individual metrics files and a summary file:
  `$base_dir/metrics/summary.txt`
 
 example summary.txt:
 ``` bash
-ERR10144421     92447   10.28   6066    0.67
-SRR19201055     94555444        10510.76        765643  85.11
+ERR10144421     3407    0.38    3407    0.38
+SRR19201055     889035  98.82   882276  98.07
 ```
 
-Columns are sample_name, coverage, coverage pc, cover 
+Columns are sample_name, coverage, coverage pc, covered bases, covered bases pc 
 
 ### Running sra download script
 
 - Prepare accessions file 
 
-- Ensure sra-tools is availible in your conda environment
+- Ensure sra-tools is availble in your conda environment
 
 - Edit or create a new config file e.g.:
 ``` bash
@@ -141,6 +157,20 @@ keep_sra: FALSE
 snakemake -s /path/to/Snakefile_download_sra_minimap2.smk --configfile /path/to/config.yaml
 ```
 
+- Outputs files will be saved in $base_dir (ideally this should be different from the base directory of the logan output, e.g. `test/sra`)
+
+### Test sra download workflow
+
+``` bash 
+snakemake --cores 2 -s ./workflow/Snakefile_download_sra_minimap2.smk --configfile ./test/config.test_sra.yaml 
+```
+
+Result:
+``` bash
+ERR10144421     92447   10.28   6066    0.67
+SRR19201055     94555444        10510.76        765643  85.11
+```
+
 # To DO
 
 1. Change how it handles accessions with no corresponding data in the logan s3 bucket
@@ -153,7 +183,7 @@ snakemake -s /path/to/Snakefile_download_sra_minimap2.smk --configfile /path/to/
 6. Move scripts out of workflow directory into scripts directory
 7. Write it so that it builds mamba environments within rules (maybe not neccessary in this case)
 8. Consider changing minimap to deal with contigs using `-x asm5`
-9. Change how it calculates metrics
-10. think about removing more files if needed
-11. Consider how it could work for multiple query sequences (saves downloading the same thing over and over again)
-12. Figure out why the LAYOUT finding doesn't work well
+9. Change how it calculates metrics (tools availible for this)
+10. Think about removing more files if needed
+11. Consider how it could work for multiple query sequences (saves downloading the same thing over and over again for different queries)
+12. Figure out why the LAYOUT finding doesn't always work well
