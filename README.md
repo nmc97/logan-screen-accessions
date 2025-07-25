@@ -1,4 +1,5 @@
 # Snakemake pipeline for screening LOGAN with minimap2
+[![DOI](https://zenodo.org/badge/843377272.svg)](https://doi.org/10.5281/zenodo.16418927)
 
 This is a snakemake pipeline for screening the LOGAN database for a query sequence using minimap2.
 
